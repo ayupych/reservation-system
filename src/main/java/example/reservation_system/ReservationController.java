@@ -28,4 +28,5 @@ public class ReservationController {
         log.info("getAllReservations");
         return reservationService.getAllReservations();
     }
+
 }
