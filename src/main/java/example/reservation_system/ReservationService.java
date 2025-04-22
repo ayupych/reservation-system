@@ -1,6 +1,7 @@
 package example.reservation_system;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -19,7 +20,7 @@ public class ReservationService {
 
     public Reservation getById(Long id) {
         ReservationEntity reservationEntity = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Not found reservation by od = " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Not found reservation by id = " + id));
         return toDomainReservation(reservationEntity);
     }
 
@@ -117,5 +118,27 @@ public class ReservationService {
                 reservation.getEndDate(),
                 reservation.getStatus()
         );
+    }
+
+    public List<Reservation> findAllReservationWhereIdMore5() {
+        List<ReservationEntity> allEntities = repository.findReservationsWithIdGreaterThan(5L);
+        return allEntities.stream().
+                map(this::toDomainReservation).
+                toList();
+    }
+
+    public List<Reservation> findAllReservationsWithStatusPending() {
+        List<ReservationEntity> allEntities = repository.findAllReservationsWithStatusPending();
+        return allEntities.stream().
+                map(this::toDomainReservation).
+                toList();
+    }
+
+    @Transactional
+    public void cancelReservationById(Long id) {
+        if (!repository.existsById(id)) {
+            throw new EntityNotFoundException("Not found reservation by id = " + id);
+        }
+        repository.setStatus(id, ReservationStatus.CANCELLED);
     }
 }

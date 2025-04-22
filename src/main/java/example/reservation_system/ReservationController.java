@@ -56,4 +56,20 @@ public class ReservationController {
         Reservation reservation = reservationService.approveReservation(id);
         return ResponseEntity.ok(reservation);
     }
+    @GetMapping("/reservationsMore")
+    public List<Reservation> findReservations() {
+        log.info("findAllReservationWhereIdMore5");
+        return reservationService.findAllReservationWhereIdMore5();
+    }
+    @GetMapping("/reservationsWithStatus")
+    public List<Reservation> findAllReservationsWithStatusPending() {
+        log.info("findAllReservationsWithStatusPending");
+        return reservationService.findAllReservationsWithStatusPending();
+    }
+    @DeleteMapping("/reservations/{id}/cancel")
+    public ResponseEntity<String > cancelReservationById(@PathVariable Long id) {
+        log.info("cancelReservationById " + id);
+        reservationService.cancelReservationById(id);
+        return ResponseEntity.status(HttpStatus.OK).body("Your reservation has been cancel");
+    }
 }
